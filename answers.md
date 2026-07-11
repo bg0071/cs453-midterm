@@ -86,12 +86,15 @@ of a request does not depend on an unfinished conversation with the client.
 
 ### 3. JSON Representation
 
-```json
 {
   "title": "Complete the CS453 midterm",
   "course": "CS453",
   "completed": false
 }
+
+## Part 3 — Express API Implementation
+
+The Express API implementation is located in the `src/` directory.
 
 ## Part 4 — Middleware
 
@@ -106,6 +109,14 @@ Validation middleware centralizes the rules for acceptable task data. This
 keeps route handlers focused on resource operations and ensures that the
 same validation behavior and error format are used consistently across
 POST, PUT, and PATCH requests.
+
+## Part 5 — Basic Client
+
+The basic Node.js client is implemented in `client.js`.
+
+## Part 6 — OpenAPI Specification
+
+The API contract is documented in `openapi.yaml`.
 
 ## Part 7 — Reflection
 
