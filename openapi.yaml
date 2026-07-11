@@ -1,0 +1,247 @@
+openapi: 3.0.3
+
+info:
+  title: Course Task Tracker API
+  version: 1.0.0
+  description: >
+    A small REST-style API for managing course tasks.
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /health:
+    get:
+      summary: Check API health
+      operationId: getHealth
+      responses:
+        "200":
+          description: API is running
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /api/tasks:
+    get:
+      summary: Get all tasks
+      operationId: getTasks
+      responses:
+        "200":
+          description: A list of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    post:
+      summary: Create a task
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskInput"
+      responses:
+        "201":
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/tasks/{id}:
+    parameters:
+      - $ref: "#/components/parameters/TaskId"
+
+    get:
+      summary: Get one task
+      operationId: getTaskById
+      responses:
+        "200":
+          description: The requested task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
+      summary: Replace an existing task
+      operationId: replaceTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskInput"
+      responses:
+        "200":
+          description: Task replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    patch:
+      summary: Partially update an existing task
+      operationId: updateTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskPatch"
+      responses:
+        "200":
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      summary: Delete an existing task
+      operationId: deleteTask
+      responses:
+        "204":
+          description: Task deleted successfully
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  parameters:
+    TaskId:
+      name: id
+      in: path
+      required: true
+      description: Unique task identifier
+      schema:
+        type: string
+      example: "1"
+
+  schemas:
+    Task:
+      type: object
+      required:
+        - id
+        - title
+        - course
+        - completed
+      properties:
+        id:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: Watch Week 3 lecture
+        course:
+          type: string
+          example: CS453
+        completed:
+          type: boolean
+          example: false
+
+    TaskInput:
+      type: object
+      required:
+        - title
+        - course
+        - completed
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          minLength: 1
+          example: Complete the CS453 midterm
+        course:
+          type: string
+          minLength: 1
+          example: CS453
+        completed:
+          type: boolean
+          example: false
+
+    TaskPatch:
+      type: object
+      minProperties: 1
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          minLength: 1
+        course:
+          type: string
+          minLength: 1
+        completed:
+          type: boolean
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: string
+          example: ok
+        message:
+          type: string
+          example: Course Task Tracker API is running
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: Task not found
+
+  responses:
+    BadRequest:
+      description: The request contains invalid data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: The requested task does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    InternalServerError:
+      description: An unexpected server error occurred
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
