@@ -5,9 +5,13 @@ info:
   version: 1.0.0
   description: >
     A small REST-style API for managing course tasks.
+  license:
+    name: Course assignment
 
 servers:
   - url: http://localhost:3000
+
+security: []
 
 paths:
   /health:
@@ -179,10 +183,12 @@ components:
         title:
           type: string
           minLength: 1
+          pattern: ".*\\S.*"
           example: Complete the CS453 midterm
         course:
           type: string
           minLength: 1
+          pattern: ".*\\S.*"
           example: CS453
         completed:
           type: boolean
@@ -196,9 +202,11 @@ components:
         title:
           type: string
           minLength: 1
+          pattern: ".*\\S.*"
         course:
           type: string
           minLength: 1
+          pattern: ".*\\S.*"
         completed:
           type: boolean
 
